@@ -13,24 +13,27 @@ public class Search {
 
     public int[] searchRange(List<List<String>> arr, String target) throws ExecutionException, InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUMS);
-        Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, target));
-        Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, target));
-        return new int[]{leftFuture.get(), rightFuture.get()}; // blocking
+        Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, 1, target));
+        Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, 1, target));
+        int leftBound = leftFuture.get(); // blocking
+        int rightBound = rightFuture.get(); // blocking
+        executorService.shutdown();
+        return new int[]{leftBound, rightBound};
     }
 
     /**
-     * Given a sorted array and a target number.
-     * Return the index of the first target number in the array if it exists, otherwise return -1.
+     * Given a sorted lists and a target number.
+     * Return the index of the first target number in the lists if it exists, otherwise return -1.
      *
-     * @param array
+     * @param lists
      * @param target
      * @return
      */
-    public static int leftBoundBinarySearch(List<List<String>> array, String target) {
-        int left = 0, right = array.size() - 1;
+    public static int leftBoundBinarySearch(List<List<String>> lists, int listIndex, String target) {
+        int left = 0, right = lists.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            LocalDate date = LocalDate.parse(array.get(mid).get(1));
+            LocalDate date = LocalDate.parse(lists.get(mid).get(listIndex));
             LocalDate targetDate = LocalDate.parse(target);
             if (targetDate.isBefore(date)) {
                 left = mid + 1;
@@ -52,11 +55,11 @@ public class Search {
      * @param target
      * @return
      */
-    public static int rightBoundBinarySearch(List<List<String>> array, String target) {
+    public static int rightBoundBinarySearch(List<List<String>> array, int listIndex, String target) {
         int left = 0, right = array.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            LocalDate date = LocalDate.parse(array.get(mid).get(1));
+            LocalDate date = LocalDate.parse(array.get(mid).get(listIndex));
             LocalDate targetDate = LocalDate.parse(target);
             if (targetDate.isBefore(date)) {
                 left = mid + 1;
