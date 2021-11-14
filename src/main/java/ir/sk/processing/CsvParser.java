@@ -1,8 +1,6 @@
 package ir.sk.processing;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +14,14 @@ public class CsvParser {
     }
 
     public List<List<String>> readFile(File csvFile, int skipLine) throws Exception {
+        return read(new FileReader(csvFile), skipLine);
+    }
+
+    public List<List<String>> read(Reader reader, int skipLine) throws IOException {
         List<List<String>> result = new ArrayList<>();
         int indexLine = 1;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+        try (BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (indexLine++ <= skipLine) {
