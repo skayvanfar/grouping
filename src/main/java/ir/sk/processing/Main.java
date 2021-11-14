@@ -10,6 +10,7 @@ public class Main {
 
     public final static String FILE_FLAG = "-f";
     public final static String DATE_FLAG = "-d";
+    public final static int SKIP_LINES = 1;
 
     private static class Option {
         String flag, opt;
@@ -27,12 +28,12 @@ public class Main {
         File file = getFile(getOpt(options, FILE_FLAG)); // TODO: 11/14/2021 many files
 
         CsvParser obj = new CsvParser();
-        List<List<String>> result = obj.readFile(file, 1);
+        List<List<String>> result = obj.readFile(file, SKIP_LINES);
 
         Search search = new Search();
 
         // O(Log n)
-        int[] result2 = search.searchRange(result, getOpt(options, DATE_FLAG));
+        int[] result2 = search.searchRange(result,1, TypeCompareStrategy.dateCompareStrategy(), getOpt(options, DATE_FLAG));
 
         Map<String, Integer> elementCountMap = getCounts(result, result2);
         Map<String, Integer> sortedElementCountMap = new LinkedHashMap<>();

@@ -11,10 +11,10 @@ public class Search {
 
     public final static int THREAD_NUMS = 2;
 
-    public int[] searchRange(List<List<String>> arr, String target) throws ExecutionException, InterruptedException {
+    public int[] searchRange(List<List<String>> arr, int index, TypeCompareStrategy strategy, String target) throws ExecutionException, InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUMS);
-        Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, 1, target));
-        Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, 1, target));
+        Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, index, strategy, target));
+        Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, index, strategy, target));
         int leftBound = leftFuture.get(); // blocking
         int rightBound = rightFuture.get(); // blocking
         executorService.shutdown();
@@ -29,17 +29,17 @@ public class Search {
      * @param target
      * @return
      */
-    public static int leftBoundBinarySearch(List<List<String>> lists, int listIndex, String target) {
+    public static int leftBoundBinarySearch(List<List<String>> lists, int listIndex, TypeCompareStrategy strategy, String target) {
         int left = 0, right = lists.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            LocalDate date = LocalDate.parse(lists.get(mid).get(listIndex));
-            LocalDate targetDate = LocalDate.parse(target);
-            if (targetDate.isBefore(date)) {
+            String date = lists.get(mid).get(listIndex);
+
+            if (strategy.compareTo(target, date) < 0) {
                 left = mid + 1;
-            } else if (targetDate.isAfter(date)) {
+            } else if (strategy.compareTo(target, date) > 0) {
                 right = mid - 1;
-            } else if (targetDate.isEqual(date)) {
+            } else if (strategy.compareTo(target, date) == 0) {
                 // shrink right border
                 right = mid - 1;
             }
@@ -55,17 +55,16 @@ public class Search {
      * @param target
      * @return
      */
-    public static int rightBoundBinarySearch(List<List<String>> array, int listIndex, String target) {
+    public static int rightBoundBinarySearch(List<List<String>> array, int listIndex, TypeCompareStrategy strategy, String target) {
         int left = 0, right = array.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            LocalDate date = LocalDate.parse(array.get(mid).get(listIndex));
-            LocalDate targetDate = LocalDate.parse(target);
-            if (targetDate.isBefore(date)) {
+            String date = array.get(mid).get(listIndex);
+            if (strategy.compareTo(target, date) < 0) {
                 left = mid + 1;
-            } else if (targetDate.isAfter(date)) {
+            } else if (strategy.compareTo(target, date) > 0) {
                 right = mid - 1;
-            } else if (targetDate.isEqual(date)) {
+            } else if (strategy.compareTo(target, date) == 0) {
                 // here~ change to shrink left bounds
                 left = mid + 1;
             }
