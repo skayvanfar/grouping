@@ -9,8 +9,10 @@ import java.util.concurrent.Future;
 
 public class Search {
 
+    public final static int THREAD_NUMS = 2;
+
     public int[] searchRange(List<List<String>> arr, String target) throws ExecutionException, InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUMS);
         Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, target));
         Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, target));
         return new int[]{leftFuture.get(), rightFuture.get()}; // blocking
