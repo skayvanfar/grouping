@@ -11,21 +11,17 @@ public class CsvParser {
 
     private static final char DEFAULT_SEPARATOR = ',';
 
-    private String[] pendingFieldLine = new String[]{};
-
     public List<List<String>> readFile(File csvFile) throws Exception {
         return readFile(csvFile, 0);
     }
 
     public List<List<String>> readFile(File csvFile, int skipLine) throws Exception {
-
         List<List<String>> result = new ArrayList<>();
         int indexLine = 1;
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-
                 if (indexLine++ <= skipLine) {
                     continue;
                 }
@@ -43,9 +39,7 @@ public class CsvParser {
     }
 
     private List<String> parse(String line, char separator) {
-
         List<String> result = new ArrayList<>();
-
         StringBuilder field = new StringBuilder();
 
         for (char c : line.toCharArray()) {

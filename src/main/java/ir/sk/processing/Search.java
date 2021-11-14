@@ -1,8 +1,11 @@
 package ir.sk.processing;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class Search {
 
-    public int[] searchRange(String[][] arr, String target) {
+    public int[] searchRange(List<List<String>> arr, String target) {
         int leftBound = leftBoundBinarySearch(arr, target);
         int rightBound = rightBoundBinarySearch(arr, target);
         return new int[]{leftBound, rightBound};
@@ -16,25 +19,21 @@ public class Search {
      * @param target
      * @return
      */
-    public static int leftBoundBinarySearch(String[][] array, String target) {
-        int left = 0, right = array.length - 1; // interval [left, right]
-        // search interval is [left, right]
+    public static int leftBoundBinarySearch(List<List<String>> array, String target) {
+        int left = 0, right = array.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (array[mid][1].compareTo(target) < 0) {
-                // search interval is [mid+1, right]
+            LocalDate date = LocalDate.parse(array.get(mid).get(1));
+            LocalDate targetDate = LocalDate.parse(target);
+            if (targetDate.isBefore(date)) {
                 left = mid + 1;
-            } else if (array[mid][1].compareTo(target) > 0) {
-                // search interval is [left, mid-1]
+            } else if (targetDate.isAfter(date)) {
                 right = mid - 1;
-            } else if (array[mid][1].equals(target)) {
+            } else if (targetDate.isEqual(date)) {
                 // shrink right border
                 right = mid - 1;
             }
         }
-        // check out of bounds
-        if (left >= array.length || !array[left][1].equals(target))
-            return -1;
         return left;
     }
 
@@ -46,22 +45,21 @@ public class Search {
      * @param target
      * @return
      */
-    public static int rightBoundBinarySearch(String[][] array, String target) {
-        int left = 0, right = array.length - 1; // interval [left, right]
+    public static int rightBoundBinarySearch(List<List<String>> array, String target) {
+        int left = 0, right = array.size() - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (array[mid][1].compareTo(target) < 0) {
+            LocalDate date = LocalDate.parse(array.get(mid).get(1));
+            LocalDate targetDate = LocalDate.parse(target);
+            if (targetDate.isBefore(date)) {
                 left = mid + 1;
-            } else if (array[mid][1].compareTo(target) > 0) {
+            } else if (targetDate.isAfter(date)) {
                 right = mid - 1;
-            } else if (array[mid].equals(target)) {
+            } else if (targetDate.isEqual(date)) {
                 // here~ change to shrink left bounds
                 left = mid + 1;
             }
         }
-        // here~ change to check right out of bounds, see below
-        if (right < 0 || !array[right].equals(target))
-            return -1;
         return right;
     }
 }

@@ -6,8 +6,7 @@ import java.io.FileReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -20,19 +19,44 @@ public class Main {
 
         Search search = new Search();
 
-      //  int[] result2 = search.searchRange(result, "2018-12-09");
+        // O(Log n)
+        int[] result2 = search.searchRange(result, "2018-12-09");
 
-        int listIndex = 0;
-        for (List<String> arrays : result) {
-            System.out.println("\nString[" + listIndex++ + "] : " + arrays);
+        Map<String, Integer> elementCountMap = getCounts(result, result2);
+        Map<String, Integer> sortedElementCountMap = new LinkedHashMap<>();
 
-            int index = 0;
-            for (String array : arrays) {
-                System.out.println(index++ + " : " + array);
-            }
+        elementCountMap.entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .forEach(entry -> {
+                    sortedElementCountMap.put(entry.getKey(), entry.getValue());
+                });
+
+        Set<String> maxNames = getByMaxCount(sortedElementCountMap);
+
+        maxNames.stream().forEach(s -> System.out.println(s));
+
+    }
+
+    private static Set<String> getByMaxCount(Map<String, Integer> sortedElementCountMap) {
+        Set<String> maxNames = new HashSet<>();
+        int maxCount = sortedElementCountMap.entrySet().stream().findFirst().get().getValue();
+        for (Map.Entry<String, Integer> item : sortedElementCountMap.entrySet()) {
+            if (item.getValue() == maxCount)
+                maxNames.add(item.getKey());
+            else
+                break;
         }
+        return maxNames;
+    }
 
-      //  System.out.println(result.stream().filter(strings -> strings[1].startsWith("2018")));
+    private static Map<String, Integer> getCounts(List<List<String>> result, int[] result2) {
+        Map<String, Integer> map = new LinkedHashMap<>();
+        result.subList(result2[0], result2[1] + 1).stream().forEach(strings -> {
+            String name = strings.get(0);
+            map.put(name, map.getOrDefault(name, 0) + 1);
+        });
+        return map;
     }
 
 }
