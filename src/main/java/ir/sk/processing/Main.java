@@ -14,7 +14,7 @@ public class Main {
     private static class Option {
         String flag, opt;
 
-        public Option(String flag, String opt) {
+        Option(String flag, String opt) {
             this.flag = flag;
             this.opt = opt;
         }
@@ -80,7 +80,6 @@ public class Main {
     }
 
     private static File getFile(String fileName) throws URISyntaxException {
-        // loads CSV file from the resource folder.
         URL resource = CsvParser.class.getClassLoader().getResource(fileName);
         return Paths.get(resource.toURI()).toFile();
     }

@@ -2,13 +2,18 @@ package ir.sk.processing;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Search {
 
-    public int[] searchRange(List<List<String>> arr, String target) {
-        int leftBound = leftBoundBinarySearch(arr, target);
-        int rightBound = rightBoundBinarySearch(arr, target);
-        return new int[]{leftBound, rightBound};
+    public int[] searchRange(List<List<String>> arr, String target) throws ExecutionException, InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Future<Integer> leftFuture = executorService.submit(() -> leftBoundBinarySearch(arr, target));
+        Future<Integer> rightFuture = executorService.submit(() -> rightBoundBinarySearch(arr, target));
+        return new int[]{leftFuture.get(), rightFuture.get()}; // blocking
     }
 
     /**
